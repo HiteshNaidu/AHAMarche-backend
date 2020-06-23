@@ -1,0 +1,27 @@
+### Install Rest Client from VS Code extension from here to test the following calls from VS Code
+### https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+GET https://5dt4vjnze7.execute-api.ca-central-1.amazonaws.com/dev/user/1641a59e-df61-403b-9c29-8d7171584735
+Authorization: eyJraWQiOiJjcFwvU2lteUdFaFdjaVluY0lWMTZRNzRsbXZkRERTbTlCS3o5SVZMNTU4UT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxNjQxYTU5ZS1kZjYxLTQwM2ItOWMyOS04ZDcxNzE1ODQ3MzUiLCJhdWQiOiI0bWd0YTBiODFtZmZqaDhocTVncmt1djkzcyIsImV2ZW50X2lkIjoiYmZlODcyMGMtNjczOC00NDlhLThhMGItOWUyZGVjNDMxMTI2IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1ODMzNTA5NDMsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5jYS1jZW50cmFsLTEuYW1hem9uYXdzLmNvbVwvY2EtY2VudHJhbC0xX25JUWJoYk9zRyIsImN1c3RvbTpQb2xpY3lObyI6IjY2NiIsInBob25lX251bWJlcl92ZXJpZmllZCI6dHJ1ZSwiY29nbml0bzp1c2VybmFtZSI6IjE2NDFhNTllLWRmNjEtNDAzYi05YzI5LThkNzE3MTU4NDczNSIsInBob25lX251bWJlciI6IisxMjI2MzM5MDkwOSIsImV4cCI6MTU4MzM1NDU0MywiaWF0IjoxNTgzMzUwOTQzfQ.KZWBwYpHKR02KlNubyB0WV6jdfl5nblLUZS9VkP8F8qNAG8NZJe1KfkdmR28wGERzdBp1H5Aae3M19Dy8IYnRgfK8TXNe8CzKP3vX8FVNpCPLShRkLzjljg05dA1jLPdx3FuAOdhbAD0xNIEJxf5Rk7JL88tq0o1c1x65FRlZcGtAN2l-XkyxzSxzZqZGyMaDN7ku8y6EpyUCVdWHJ7oTuLtB465oSxm7nXt3yHqVqA47vViO8r8mYfT1V4lgTU5YWLQl3yLLuOqBF4xahSk_mtHwSIRhx_ur0oSHrJs4m5lEj57on8OWF7r_gMfllZBi2VUo6v_RfwKMCcYMWuL3w
+
+### serverless logs -f getUser
+// serverless logs -f createAuthChallenge
+PUT https://5dt4vjnze7.execute-api.ca-central-1.amazonaws.com/dev/user/1641a59e-df61-403b-9c29-8d7171584735
+
+{
+    "locations":{"key":"ab-10", "en":"jdjfh"}
+}
+
+###
+PUT https://5dt4vjnze7.execute-api.ca-central-1.amazonaws.com/dev/user/1641a59e-df61-403b-9c29-8d7171584735
+
+{
+    "cognitoUser":{"key":"ab-10", "en":"jdjfh"}
+}
+
+###
+PUT https://5dt4vjnze7.execute-api.ca-central-1.amazonaws.com/dev/user/ad213455-0305-433c-b4f4-b7e96c09ae51
+
+{
+    "cognitoUser":{}
+}

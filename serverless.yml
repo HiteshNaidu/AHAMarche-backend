@@ -1,0 +1,269 @@
+service: AHAMarche
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    # - layers/**
+    - services/**
+
+provider:
+  name: aws
+  # stage: ${opt:stage, 'dev'}
+  runtime: nodejs12.x
+  versionFunctions: false
+  # tracing:
+  #   lambda: true # optional, enables tracing for all functions (can be true (true equals 'Active') 'Active' or 'PassThrough') to view invocations in xray
+  deploymentBucket:
+    name: ahamarche-serverless-deployments-sandbox
+  role: arn:aws:iam::321072488546:role/sbx-ahamarche
+  region: ca-central-1
+  logRetentionInDays: 14
+  environment:
+    USERPOOL:
+      "Fn::ImportValue": ${self:service}-dev-Userpool
+    TABLE:
+      "Fn::ImportValue": ${self:service}-dev-DynamoDB
+    # URL_ENDPOINT:
+    #   Fn::Join:
+    #     - ""
+    #     - - "https://"
+    #       - Ref: "ApiGatewayRestApi"
+    #       - ".execute-api.${self:provider.region}.amazonaws.com/dev"
+  stackTags:
+    environment: sandbox
+    classification: internal
+    cost_code: "3144"
+    application_name: ${self:service}-dev
+    business_owner: AHAMarche
+    tech_owner: AHAMarche
+
+functions:
+  # Lambda triggers for Cognito Custom Passwordless Auth
+  preSignUp:
+    handler: services/auth/preSignUp.handler
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/auth/**
+  defineAuthChallenge:
+    handler: services/auth/defineAuthChallenge.handler
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/auth/**
+  createAuthChallenge:
+    memorySize: 512 # optional, in MB, default is 1024
+    timeout: 30
+    handler: services/auth/createAuthChallenge.handler
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/auth/**
+  verifyAuthChallengeResponse:
+    handler: services/auth/verifyAuthChallengeResponse.handler
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/auth/**
+
+  # API`s to get user, update user, delete user, delete cognito user
+  getUser:
+    handler: services/user/get.get
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/user/**
+    events:
+      - http:
+          path: user/{id}
+          method: get
+          cors: true
+
+  postUser:
+    handler: services/user/update.update
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/user/**
+    events:
+      - http:
+          path: user/{id}
+          method: put
+          cors: true
+
+  deleteUser:
+    handler: services/user/delete.delete
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/user/**
+    events:
+      - http:
+          path: user/{id}
+          method: delete
+          cors: true
+
+  deleteCognitoUser:
+    handler: services/user/deleteCognitouser.handler
+    # layers:
+    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
+    package:
+      include:
+        - services/user/**
+    events:
+      - http:
+          path: user/{id}
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    #  Create dynamo db single table for User, Policies
+    AHAMarcheUsers:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: sort
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: sort
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        # StreamSpecification:
+        #   StreamViewType: NEW_IMAGE
+        TableName: ${self:service}-${self:provider.stage}
+        # LocalSecondaryIndexes:
+        #   - IndexName: DeviceIdPassIdx
+        #     KeySchema:
+        #       - AttributeName: id
+        #         KeyType: HASH
+        #       - AttributeName: passTypeIdentifier
+        #         KeyType: RANGE
+        #     Projection:
+        #       ProjectionType: ALL
+        # GlobalSecondaryIndexes:
+        #   - IndexName: sortIdIdx
+        #     KeySchema:
+        #       - AttributeName: sort
+        #         KeyType: HASH
+        #       - AttributeName: id
+        #         KeyType: RANGE
+        #     Projection:
+        #       ProjectionType: ALL
+
+    # Creates a user pool in cognito for your app to auth against
+    UserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        UserPoolName: !Sub ${self:service}-${self:provider.stage}
+        UsernameAttributes:
+          - phone_number
+        MfaConfiguration: "OFF"
+        LambdaConfig:
+          PreSignUp: !GetAtt [PreSignUpLambdaFunction, Arn]
+          CreateAuthChallenge: !GetAtt [CreateAuthChallengeLambdaFunction, Arn]
+          DefineAuthChallenge: !GetAtt [DefineAuthChallengeLambdaFunction, Arn]
+          VerifyAuthChallengeResponse:
+            !GetAtt [VerifyAuthChallengeResponseLambdaFunction, Arn]
+        Schema:
+          - Name: city
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MaxLength: 256
+              MinLength: 1
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Name: verified_phone_number
+              Priority: 1
+
+    # Creates a User Pool Client to be used by the identity pool
+    UserPoolClient:
+      Type: "AWS::Cognito::UserPoolClient"
+      Properties:
+        ClientName: !Sub ${self:service}AppClient
+        GenerateSecret: false
+        UserPoolId: !Ref UserPool
+        ExplicitAuthFlows:
+          - CUSTOM_AUTH_FLOW_ONLY
+
+    # ApiGatewayAuthorizer:
+    #   DependsOn:
+    #   # this is pre-defined by serverless
+    #   - ApiGatewayRestApi
+    #   Type: AWS::ApiGateway::Authorizer
+    #   Properties:
+    #     Name: cognito_auth
+    #     # apparently ApiGatewayRestApi is a global string
+    #     RestApiId: { "Ref": "ApiGatewayRestApi" }
+    #     IdentitySource: method.request.header.Authorization
+    #     Type: COGNITO_USER_POOLS
+    #     ProviderARNs:
+    #       - Fn::GetAtt: [UserPool, Arn]
+
+    #To resolve first time Cognito login error
+    PreSignUpLambdaInvocationPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !GetAtt PreSignUpLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !GetAtt UserPool.Arn
+    DefineAuthLambdaInvocationPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !GetAtt DefineAuthChallengeLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !GetAtt UserPool.Arn
+    CreateAuthLambdaInvocationPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !GetAtt CreateAuthChallengeLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !GetAtt UserPool.Arn
+    VerifyAuthLambdaInvocationPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !GetAtt VerifyAuthChallengeResponseLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !GetAtt UserPool.Arn
+
+  Outputs:
+    UserPoolId:
+      Value: !Ref UserPool
+      Export:
+        Name: ${self:service}-dev-Userpool
+    DynamoDB:
+      Value: !Ref AHAMarcheUsers
+      Export:
+        Name: ${self:service}-dev-DynamoDB
+    # UserPoolARN:
+    #   Value: 
+    #     Fn::GetAtt: [UserPool, Arn]
+    #   Export:
+    #     Name: ${self:service}-dev-UserpoolARN
+    # PoolClientID:
+    #   Value: !Ref UserPoolClient
+      # Export:
+      #   Name: ${self:service}UserPoolClient-${self:provider.stage}
+    # ApiGatewayAuthorizer:
+    #   Value: !Ref ApiGatewayAuthorizer
+    #   Export:
+    #     Name: ${self:service}-${opt:stage}-ApiGatewayAuthorizer
