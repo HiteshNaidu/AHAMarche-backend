@@ -26,6 +26,8 @@ async function writeToDB(event) {
 
   var userID = event.userName;
   var city = event.request.userAttributes["custom:city"];
+  var firstname = event.request.userAttributes["custom:firstname"];
+  var lastname = event.request.userAttributes["custom:lastname"];
   var phone = event.request.userAttributes.phone_number;
 
   const params = {
@@ -36,8 +38,13 @@ async function writeToDB(event) {
       sort: "user-" + userID,
       cognitoUser: {},
       city: city,
+      firstname: firstname,
+      lastname: lastname,
       phone: phone,
-      isAdmin: false,
+      isDriver: false,
+      vehicleType: "NA",
+      deliveriesCompleted: 0,
+      linkToS3: "NA",
       createdAt: timestamp.toString(),
       updatedAt: timestamp.toString(),
     },

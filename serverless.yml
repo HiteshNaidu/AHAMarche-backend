@@ -145,7 +145,7 @@ resources:
         BillingMode: PAY_PER_REQUEST
         # StreamSpecification:
         #   StreamViewType: NEW_IMAGE
-        TableName: ${self:service}-${self:provider.stage}
+        TableName: ${self:service}-dev
         # LocalSecondaryIndexes:
         #   - IndexName: DeviceIdPassIdx
         #     KeySchema:
@@ -169,7 +169,7 @@ resources:
     UserPool:
       Type: "AWS::Cognito::UserPool"
       Properties:
-        UserPoolName: !Sub ${self:service}-${self:provider.stage}
+        UserPoolName: !Sub ${self:service}-dev
         UsernameAttributes:
           - phone_number
         MfaConfiguration: "OFF"
@@ -181,6 +181,18 @@ resources:
             !GetAtt [VerifyAuthChallengeResponseLambdaFunction, Arn]
         Schema:
           - Name: city
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MaxLength: 256
+              MinLength: 1
+          - Name: firstname
+            AttributeDataType: String
+            Mutable: true
+            StringAttributeConstraints:
+              MaxLength: 256
+              MinLength: 1
+          - Name: lastname
             AttributeDataType: String
             Mutable: true
             StringAttributeConstraints:
@@ -262,7 +274,7 @@ resources:
     # PoolClientID:
     #   Value: !Ref UserPoolClient
       # Export:
-      #   Name: ${self:service}UserPoolClient-${self:provider.stage}
+      #   Name: ${self:service}UserPoolClient-dev
     # ApiGatewayAuthorizer:
     #   Value: !Ref ApiGatewayAuthorizer
     #   Export:
