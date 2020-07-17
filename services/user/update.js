@@ -25,6 +25,22 @@ module.exports.update = async (event, context, callback) => {
         ReturnValues: "ALL_NEW"
       };
     }
+    else if (data.cityItem) {
+      params = {
+        TableName: process.env.TABLE,
+        Key: {
+          id: event.pathParameters.id,
+          sort: event.pathParameters.id,
+        },
+        ExpressionAttributeValues: {
+          ":cityItem": data.cityItem,
+          ":updatedAt": timestamp
+        },
+        UpdateExpression:
+          "SET cityItem = :cityItem, updatedAt = :updatedAt",
+        ReturnValues: "ALL_NEW"
+      };
+    }
     return params;
   }
 

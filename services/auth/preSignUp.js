@@ -38,6 +38,7 @@ async function writeToDB(event) {
       sort: "user-" + userID,
       cognitoUser: {},
       city: city,
+      cityItem: {},
       firstname: firstname,
       lastname: lastname,
       phone: phone,

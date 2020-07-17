@@ -72,7 +72,7 @@ functions:
       include:
         - services/auth/**
 
-  # API`s to get user, update user, delete user, delete cognito user
+  # User APIs
   getUser:
     handler: services/user/get.get
     # layers:
@@ -125,6 +125,18 @@ functions:
           method: post
           cors: true
 
+  # Item APIs
+  getItemsByCategory:
+    handler: services/item/getItemsByCategory.get
+    package:
+      include:
+        - services/item/**
+    events:
+      - http:
+          path: category/{id}
+          method: get
+          cors: true
+
 resources:
   Resources:
     #  Create dynamo db single table for User, Policies
@@ -155,15 +167,15 @@ resources:
         #         KeyType: RANGE
         #     Projection:
         #       ProjectionType: ALL
-        # GlobalSecondaryIndexes:
-        #   - IndexName: sortIdIdx
-        #     KeySchema:
-        #       - AttributeName: sort
-        #         KeyType: HASH
-        #       - AttributeName: id
-        #         KeyType: RANGE
-        #     Projection:
-        #       ProjectionType: ALL
+        GlobalSecondaryIndexes:
+          - IndexName: itemIdx
+            KeySchema:
+              - AttributeName: sort
+                KeyType: HASH
+              - AttributeName: id
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
 
     # Creates a user pool in cognito for your app to auth against
     UserPool:
