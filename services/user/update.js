@@ -41,6 +41,54 @@ module.exports.update = async (event, context, callback) => {
         ReturnValues: "ALL_NEW"
       };
     }
+    else if (data.city) {
+      params = {
+        TableName: process.env.TABLE,
+        Key: {
+          id: event.pathParameters.id,
+          sort: event.pathParameters.id,
+        },
+        ExpressionAttributeValues: {
+          ":city": data.city,
+          ":updatedAt": timestamp
+        },
+        UpdateExpression:
+          "SET city = :city, updatedAt = :updatedAt",
+        ReturnValues: "ALL_NEW"
+      };
+    }
+    else if (data.isDriver) {
+      params = {
+        TableName: process.env.TABLE,
+        Key: {
+          id: event.pathParameters.id,
+          sort: event.pathParameters.id,
+        },
+        ExpressionAttributeValues: {
+          ":isDriver": data.isDriver,
+          ":updatedAt": timestamp
+        },
+        UpdateExpression:
+          "SET isDriver = :isDriver, updatedAt = :updatedAt",
+        ReturnValues: "ALL_NEW"
+      };
+    }
+    else if (data.vehicleType) {
+      params = {
+        TableName: process.env.TABLE,
+        Key: {
+          id: event.pathParameters.id,
+          sort: event.pathParameters.id,
+        },
+        ExpressionAttributeValues: {
+          ":vehicleType": data.vehicleType,
+          ":updatedAt": timestamp
+        },
+        UpdateExpression:
+          "SET vehicleType = :vehicleType, updatedAt = :updatedAt",
+        ReturnValues: "ALL_NEW"
+      };
+    }
     return params;
   }
 
