@@ -43,6 +43,7 @@ async function writeToDB(event) {
       lastname: lastname,
       phone: phone,
       isDriver: false,
+      isDriverActive: false,
       vehicleType: "",
       deliveriesCompleted: 0,
       linkToS3: "NA",

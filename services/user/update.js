@@ -89,6 +89,38 @@ module.exports.update = async (event, context, callback) => {
         ReturnValues: "ALL_NEW"
       };
     }
+    else if (data.isDriverActive) {
+      params = {
+        TableName: process.env.TABLE,
+        Key: {
+          id: event.pathParameters.id,
+          sort: event.pathParameters.id,
+        },
+        ExpressionAttributeValues: {
+          ":isDriverActive": data.isDriverActive,
+          ":updatedAt": timestamp
+        },
+        UpdateExpression:
+          "SET isDriverActive = :isDriverActive, updatedAt = :updatedAt",
+        ReturnValues: "ALL_NEW"
+      };
+    }
+    else if (!data.isDriverActive) {
+      params = {
+        TableName: process.env.TABLE,
+        Key: {
+          id: event.pathParameters.id,
+          sort: event.pathParameters.id,
+        },
+        ExpressionAttributeValues: {
+          ":isDriverActive": data.isDriverActive,
+          ":updatedAt": timestamp
+        },
+        UpdateExpression:
+          "SET isDriverActive = :isDriverActive, updatedAt = :updatedAt",
+        ReturnValues: "ALL_NEW"
+      };
+    }
     return params;
   }
 
