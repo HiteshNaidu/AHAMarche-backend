@@ -11,16 +11,14 @@ module.exports.get = async (event, context, callback) => {
     // Get from to DB here...
     var params = {
         TableName: process.env.TABLE,
-        IndexName: "itemIdx",
-        KeyConditionExpression:
-            "sort = :sort AND begins_with(id, :id)",
         ExpressionAttributeValues: {
-            ":id": "item",
-            ":sort": id,
+            ":id": {S: 'item-'},
+            // ":user": id,
         },
+        FilterExpression: "contains (id, :id)"
     };
 
-    const data = await dynamoDb.query(params).promise();
+    const data = await dynamoDb.scan(params).promise();
     console.log(data);
 
     if (data.Items) {

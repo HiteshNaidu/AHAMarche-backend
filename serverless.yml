@@ -5,7 +5,6 @@ package:
   individually: true
   exclude:
     - node_modules/**
-    # - layers/**
     - services/**
 
 provider:
@@ -13,8 +12,6 @@ provider:
   # stage: ${opt:stage, 'dev'}
   runtime: nodejs12.x
   versionFunctions: false
-  # tracing:
-  #   lambda: true # optional, enables tracing for all functions (can be true (true equals 'Active') 'Active' or 'PassThrough') to view invocations in xray
   deploymentBucket:
     name: ahamarche-serverless-deployments-sandbox
   role: arn:aws:iam::321072488546:role/sbx-ahamarche
@@ -43,15 +40,11 @@ functions:
   # Lambda triggers for Cognito Custom Passwordless Auth
   preSignUp:
     handler: services/auth/preSignUp.handler
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/auth/**
   defineAuthChallenge:
     handler: services/auth/defineAuthChallenge.handler
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/auth/**
@@ -59,15 +52,11 @@ functions:
     memorySize: 512 # optional, in MB, default is 1024
     timeout: 30
     handler: services/auth/createAuthChallenge.handler
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/auth/**
   verifyAuthChallengeResponse:
     handler: services/auth/verifyAuthChallengeResponse.handler
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/auth/**
@@ -75,8 +64,6 @@ functions:
   # User APIs
   getUser:
     handler: services/user/get.get
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/user/**
@@ -88,8 +75,6 @@ functions:
 
   postUser:
     handler: services/user/update.update
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/user/**
@@ -101,8 +86,6 @@ functions:
 
   deleteUser:
     handler: services/user/delete.delete
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/user/**
@@ -114,8 +97,6 @@ functions:
 
   deleteCognitoUser:
     handler: services/user/deleteCognitouser.handler
-    # layers:
-    #   - ${cf:layers-dev.DependencylayerLambdaLayerQualifiedArn}
     package:
       include:
         - services/user/**
@@ -133,13 +114,35 @@ functions:
         - services/item/**
     events:
       - http:
-          path: category/{id}
+          path: item/{id}
           method: get
           cors: true
 
+  postItem:
+    handler: services/item/postItem.handler
+    package:
+      include:
+        - services/item/**
+    events:
+      - http:
+          path: item/{id}
+          method: post
+          cors: true
+
+  # getItemsByUser:
+  #   handler: services/item/getItemsByUser.get
+  #   package:
+  #     include:
+  #       - services/item/**
+  #   events:
+  #     - http:
+  #         path: all/{id}
+  #         method: get
+  #         cors: true
+
 resources:
   Resources:
-    #  Create dynamo db single table for User, Policies
+    #  Create dynamo db single table for User, Items
     AHAMarcheUsers:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: Delete
@@ -155,18 +158,7 @@ resources:
           - AttributeName: sort
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        # StreamSpecification:
-        #   StreamViewType: NEW_IMAGE
         TableName: ${self:service}-dev
-        # LocalSecondaryIndexes:
-        #   - IndexName: DeviceIdPassIdx
-        #     KeySchema:
-        #       - AttributeName: id
-        #         KeyType: HASH
-        #       - AttributeName: passTypeIdentifier
-        #         KeyType: RANGE
-        #     Projection:
-        #       ProjectionType: ALL
         GlobalSecondaryIndexes:
           - IndexName: itemIdx
             KeySchema:
