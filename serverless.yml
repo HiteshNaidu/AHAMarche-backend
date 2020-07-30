@@ -22,12 +22,6 @@ provider:
       "Fn::ImportValue": ${self:service}-dev-Userpool
     TABLE:
       "Fn::ImportValue": ${self:service}-dev-DynamoDB
-    # URL_ENDPOINT:
-    #   Fn::Join:
-    #     - ""
-    #     - - "https://"
-    #       - Ref: "ApiGatewayRestApi"
-    #       - ".execute-api.${self:provider.region}.amazonaws.com/dev"
   stackTags:
     environment: sandbox
     classification: internal
@@ -71,7 +65,11 @@ functions:
       - http:
           path: user/{id}
           method: get
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - Authorization
+            allowCredentials: true
 
   postUser:
     handler: services/user/update.update
@@ -93,7 +91,12 @@ functions:
       - http:
           path: user/{id}
           method: delete
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+              - Authorization
+            allowCredentials: true
 
   deleteCognitoUser:
     handler: services/user/deleteCognitouser.handler
@@ -116,7 +119,11 @@ functions:
       - http:
           path: item/{id}
           method: get
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - Authorization
+            allowCredentials: true
 
   postItem:
     handler: services/item/postItem.handler
@@ -127,7 +134,12 @@ functions:
       - http:
           path: item/{id}
           method: post
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+              - Authorization
+            allowCredentials: true
 
   # getItemsByUser:
   #   handler: services/item/getItemsByUser.get
@@ -217,19 +229,19 @@ resources:
         ExplicitAuthFlows:
           - CUSTOM_AUTH_FLOW_ONLY
 
-    # ApiGatewayAuthorizer:
-    #   DependsOn:
-    #   # this is pre-defined by serverless
-    #   - ApiGatewayRestApi
-    #   Type: AWS::ApiGateway::Authorizer
-    #   Properties:
-    #     Name: cognito_auth
-    #     # apparently ApiGatewayRestApi is a global string
-    #     RestApiId: { "Ref": "ApiGatewayRestApi" }
-    #     IdentitySource: method.request.header.Authorization
-    #     Type: COGNITO_USER_POOLS
-    #     ProviderARNs:
-    #       - Fn::GetAtt: [UserPool, Arn]
+    ApiGatewayAuthorizer:
+      DependsOn:
+      # this is pre-defined by serverless
+      - ApiGatewayRestApi
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: cognito_auth
+        # apparently ApiGatewayRestApi is a global string
+        RestApiId: { "Ref": "ApiGatewayRestApi" }
+        IdentitySource: method.request.header.Authorization
+        Type: COGNITO_USER_POOLS
+        ProviderARNs:
+          - Fn::GetAtt: [UserPool, Arn]
 
     #To resolve first time Cognito login error
     PreSignUpLambdaInvocationPermission:
@@ -270,16 +282,3 @@ resources:
       Value: !Ref AHAMarcheUsers
       Export:
         Name: ${self:service}-dev-DynamoDB
-    # UserPoolARN:
-    #   Value: 
-    #     Fn::GetAtt: [UserPool, Arn]
-    #   Export:
-    #     Name: ${self:service}-dev-UserpoolARN
-    # PoolClientID:
-    #   Value: !Ref UserPoolClient
-      # Export:
-      #   Name: ${self:service}UserPoolClient-dev
-    # ApiGatewayAuthorizer:
-    #   Value: !Ref ApiGatewayAuthorizer
-    #   Export:
-    #     Name: ${self:service}-${opt:stage}-ApiGatewayAuthorizer

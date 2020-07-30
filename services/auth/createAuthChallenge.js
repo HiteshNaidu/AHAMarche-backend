@@ -70,7 +70,7 @@ async function sendSMS(phone, code, userId) {
     Message:
       "Your verification code to login into AHAMarche is " +
       code +
-      ".\n\nAlternatively, use this link to login:\nhttp://ourdomainname/submitcode?userid=" + userId + "&otp=" +
+      ".\n\nAlternatively, use this link to login:\nhttps://master.d386s6q11ooae8.amplifyapp.com/submitcode?userid=" + userId + "&otp=" +
       code,
     PhoneNumber: phone
   };

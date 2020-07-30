@@ -29,9 +29,15 @@ module.exports.get = async (event, context, callback) => {
 
     return response;
   } catch (error) {
-    return {
+    const response = {
       statusCode: 500,
-      error: `Could not get: ${error.stack}`
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      body: "No users found!"
     };
+    callback(null, response);
+    return response
   }
 };

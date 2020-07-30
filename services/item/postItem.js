@@ -47,12 +47,19 @@ module.exports.handler = async (event, context, callback) => {
         try {
             const data = await dynamoDb.put(params).promise();
         } catch (error) {
-            return {
-                statusCode: 500,
-                error: `Could not post: ${error.stack}`
+            // create a response
+            const response = {
+                statusCode: 403,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Credentials": true
+                },
+                body: "Cannot post the item"
             };
-        }
 
+            callback(null, response);
+            return response;
+        }
 
         // create a response
         const response = {
