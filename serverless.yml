@@ -141,6 +141,17 @@ functions:
               - Authorization
             allowCredentials: true
 
+  textToSeller:
+    handler: services/sns/textToSeller.handler
+    package:
+      include:
+        - services/sns/**
+    events:
+      - http:
+          path: sns/{id}
+          method: post
+          cors: true
+
   # getItemsByUser:
   #   handler: services/item/getItemsByUser.get
   #   package:
