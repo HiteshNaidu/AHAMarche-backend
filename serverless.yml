@@ -152,6 +152,17 @@ functions:
               - Authorization
             allowCredentials: true
 
+  updateItem:
+    handler: services/item/updateItem.update
+    package:
+      include:
+        - services/item/**
+    events:
+      - http:
+          path: item/{id}
+          method: put
+          cors: true
+
   textToSeller:
     handler: services/sns/textToSeller.handler
     package:

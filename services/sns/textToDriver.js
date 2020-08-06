@@ -12,7 +12,7 @@ module.exports.handler = async (event, context, callback) => {
 
     var params = {
         Message: "AHAMarché Driver(" + data.city + "): Hi, a new delivery has been assigned to you.\nItem: " + data.item + "\nSeller's name and phone: " + data.sellerName + ", " + data.sellerPhone +
-            "\nBuyer's name and phone: " + data.buyerName + ", " + data.buyerPhone + "\n\nPlease contact the buyer and the seller for further details.", /* required */
+            "\nBuyer's name and phone: " + data.buyerName + ", " + data.buyerPhone + "\n\nDelivery Pay: $" + data.price + "\n\nPlease contact the buyer and the seller for further details.", /* required */
         PhoneNumber: event.pathParameters.id,
     };
 
