@@ -14,7 +14,7 @@ module.exports.update = async (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
           id: event.pathParameters.id,
-          sort: event.pathParameters.id,
+          sort: "user",
         },
         ExpressionAttributeValues: {
           ":cognitoUser": data.cognitoUser,
@@ -30,7 +30,7 @@ module.exports.update = async (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
           id: event.pathParameters.id,
-          sort: event.pathParameters.id,
+          sort: "user",
         },
         ExpressionAttributeValues: {
           ":cityItem": data.cityItem,
@@ -46,7 +46,7 @@ module.exports.update = async (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
           id: event.pathParameters.id,
-          sort: event.pathParameters.id,
+          sort: "user",
         },
         ExpressionAttributeValues: {
           ":city": data.city,
@@ -62,7 +62,7 @@ module.exports.update = async (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
           id: event.pathParameters.id,
-          sort: event.pathParameters.id,
+          sort: "user",
         },
         ExpressionAttributeValues: {
           ":isDriver": data.isDriver,
@@ -78,7 +78,7 @@ module.exports.update = async (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
           id: event.pathParameters.id,
-          sort: event.pathParameters.id,
+          sort: "user",
         },
         ExpressionAttributeValues: {
           ":vehicleType": data.vehicleType,
@@ -94,7 +94,7 @@ module.exports.update = async (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
           id: event.pathParameters.id,
-          sort: event.pathParameters.id,
+          sort: "user",
         },
         ExpressionAttributeValues: {
           ":isDriverActive": data.isDriverActive,
@@ -110,7 +110,7 @@ module.exports.update = async (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
           id: event.pathParameters.id,
-          sort: event.pathParameters.id,
+          sort: "user",
         },
         ExpressionAttributeValues: {
           ":isDriverActive": data.isDriverActive,

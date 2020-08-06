@@ -71,6 +71,17 @@ functions:
               - Authorization
             allowCredentials: true
 
+  getAllUsers:
+    handler: services/user/getAllUsers.get
+    package:
+      include:
+        - services/user/**
+    events:
+      - http:
+          path: user
+          method: get
+          cors: true
+
   postUser:
     handler: services/user/update.update
     package:
@@ -148,7 +159,18 @@ functions:
         - services/sns/**
     events:
       - http:
-          path: sns/{id}
+          path: sns/seller/{id}
+          method: post
+          cors: true
+
+  textToDriver:
+    handler: services/sns/textToDriver.handler
+    package:
+      include:
+        - services/sns/**
+    events:
+      - http:
+          path: sns/driver/{id}
           method: post
           cors: true
 

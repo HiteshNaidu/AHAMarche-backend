@@ -1,0 +1,49 @@
+"use strict";
+const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+var response = null;
+
+module.exports.get = async (event, context, callback) => {
+    console.log(event);
+
+    // Get from to DB here...
+    var params = {
+        TableName: process.env.TABLE,
+        IndexName: "itemIdx",
+        KeyConditionExpression:
+            "sort = :sort AND begins_with(id, :id)",
+        ExpressionAttributeValues: {
+            ":id": "user",
+            ":sort": "user",
+        },
+    };
+
+    const data = await dynamoDb.query(params).promise();
+    console.log(data);
+
+    if (data.Items) {
+        // create a response
+        response = {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": true,
+            },
+            body: JSON.stringify(data.Items),
+        };
+    } else {
+        response = {
+            statusCode: 204,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": true,
+            },
+            body: "No users found!"
+        }
+    };
+
+    console.log(response);
+    callback(null, response);
+
+    return response;
+};

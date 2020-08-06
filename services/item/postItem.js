@@ -33,6 +33,7 @@ module.exports.handler = async (event, context, callback) => {
                 status: data.status,
                 title: data.title,
                 user: event.pathParameters.id,
+                itemSold: false,
                 createdAt: timestamp.toString(),
                 updatedAt: timestamp.toString(),
             },

@@ -7,7 +7,7 @@ module.exports.delete = (event, context, callback) => {
         TableName: process.env.TABLE,
         Key: {
             id: event.pathParameters.id,
-            sort: event.pathParameters.id,
+            sort: "user",
         },
     };
 

@@ -35,7 +35,7 @@ async function writeToDB(event) {
     ReturnValues: "ALL_OLD",
     Item: {
       id: "user-" + userID,
-      sort: "user-" + userID,
+      sort: "user",
       cognitoUser: {},
       city: city,
       cityItem: {},

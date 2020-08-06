@@ -8,10 +8,11 @@ const sns = new AWS.SNS({ region: "us-east-1" });
 
 module.exports.handler = async (event, context, callback) => {
     const data = JSON.parse(event.body);
+    console.log(event);
 
     var params = {
-        Message: "AHAMarché: Hi " + data.sellerName + " a user wants to buy the " + data.item + " you've uploaded to AHAMarché.\nInterested person's name: " +
-            data.userName + "\nInterested person's phone: " + data.phone + "\nPlease contact the person directly for further discussion. Thank you!", /* required */
+        Message: "AHAMarché Driver(" + data.city + "): Hi, a new delivery has been assigned to you.\nItem: " + data.item + "\nSeller's name and phone: " + data.sellerName + ", " + data.sellerPhone +
+            "\nBuyer's name and phone: " + data.buyerName + ", " + data.buyerPhone + "\n\nPlease contact the buyer and the seller for further details.", /* required */
         PhoneNumber: event.pathParameters.id,
     };
 
@@ -26,7 +27,7 @@ module.exports.handler = async (event, context, callback) => {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Credentials": true
             },
-            body: "Text message to seller published successfully"
+            body: "Text message to driver published successfully"
         };
         console.log(response);
         callback(null, response);
