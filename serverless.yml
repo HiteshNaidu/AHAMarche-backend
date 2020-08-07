@@ -65,11 +65,7 @@ functions:
       - http:
           path: user/{id}
           method: get
-          cors:
-            origin: '*'
-            headers:
-              - Authorization
-            allowCredentials: true
+          cors: true
 
   getAllUsers:
     handler: services/user/getAllUsers.get
@@ -80,7 +76,12 @@ functions:
       - http:
           path: user
           method: get
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+              - Authorization
+            allowCredentials: true
 
   postUser:
     handler: services/user/update.update
@@ -161,7 +162,12 @@ functions:
       - http:
           path: item/{id}
           method: put
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+              - Authorization
+            allowCredentials: true
 
   textToSeller:
     handler: services/sns/textToSeller.handler
@@ -172,7 +178,12 @@ functions:
       - http:
           path: sns/seller/{id}
           method: post
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+              - Authorization
+            allowCredentials: true
 
   textToDriver:
     handler: services/sns/textToDriver.handler
@@ -183,7 +194,12 @@ functions:
       - http:
           path: sns/driver/{id}
           method: post
-          cors: true
+          cors:
+            origin: '*'
+            headers:
+              - '*'
+              - Authorization
+            allowCredentials: true
 
   # getItemsByUser:
   #   handler: services/item/getItemsByUser.get
