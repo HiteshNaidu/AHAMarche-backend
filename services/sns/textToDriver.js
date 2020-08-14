@@ -11,8 +11,10 @@ module.exports.handler = async (event, context, callback) => {
     console.log(event);
 
     var params = {
-        Message: "AHAMarché Driver(" + data.city + "): Hi, a new delivery has been assigned to you.\nItem: " + data.item + "\nSeller's name and phone: " + data.sellerName + ", " + data.sellerPhone +
-            "\nBuyer's name and phone: " + data.buyerName + ", " + data.buyerPhone + "\n\nDelivery Pay: $" + data.price + "\n\nPlease contact the buyer and the seller for further details.", /* required */
+        Message: "AHAMarché Driver(" + data.city + "): Hi, a new delivery has been assigned to you.\nItem: " + data.item + "\nSeller's name and phone: " +
+            data.sellerName + ", " + data.sellerPhone + "\nSeller's location: " + (data.sellerLocation.latitude) + ", " + (data.sellerLocation.longitude) +
+            "\n\nBuyer's name and phone: " + data.buyerName + ", " + data.buyerPhone + "\nBuyer's location: " + (data.buyerLocation.latitude) + ", " +
+            (data.buyerLocation.longitude) + "\n\nDelivery Pay: $" + data.price + "\n\nPlease contact the buyer and the seller for further details.", /* required */
         PhoneNumber: event.pathParameters.id,
     };
 

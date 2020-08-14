@@ -89,6 +89,22 @@ module.exports.update = async (event, context, callback) => {
         ReturnValues: "ALL_NEW"
       };
     }
+    else if (data.realLocation) {
+      params = {
+        TableName: process.env.TABLE,
+        Key: {
+          id: event.pathParameters.id,
+          sort: "user",
+        },
+        ExpressionAttributeValues: {
+          ":realLocation": data.realLocation,
+          ":updatedAt": timestamp
+        },
+        UpdateExpression:
+          "SET realLocation = :realLocation, updatedAt = :updatedAt",
+        ReturnValues: "ALL_NEW"
+      };
+    }
     else if (data.isDriverActive) {
       params = {
         TableName: process.env.TABLE,

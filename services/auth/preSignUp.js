@@ -47,6 +47,7 @@ async function writeToDB(event) {
       vehicleType: "",
       deliveriesCompleted: 0,
       linkToS3: "NA",
+      realLocation: {},
       createdAt: timestamp.toString(),
       updatedAt: timestamp.toString(),
     },
